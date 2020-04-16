@@ -33,10 +33,59 @@ export default {
     mounted(){
         tinymce.init({
             selector:'#tinymceeditor',
-            language:'zh_CN',
+            language:'zh_CN',//this.$i18n.locale
             height: '600px',
-            images_upload_url: '/demo/upimg.php',
-            images_upload_base_path: '/demo',
+            // images_upload_url: '/demo/upimg.php',
+            // images_upload_base_path: '/demo',
+            // image_uploadtab: false,
+
+            // plugins: 'image',
+            // a11y_advanced_options: true,
+            images_upload_handler: function (blobInfo, success, failure) {
+                var xhr, formData;
+                xhr = new XMLHttpRequest();
+                xhr.withCredentials = false;
+                xhr.open('POST', 'postAcceptor.php');
+                xhr.onload = function() {
+                    var json;
+                    if (xhr.status != 200) {
+                        failure('HTTP Error: ' + xhr.status);
+                        return;
+                    }
+                    json = JSON.parse(xhr.responseText);
+                    if (!json || typeof json.location != 'string') {
+                        failure('Invalid JSON: ' + xhr.responseText);
+                        return;
+                    }
+                    success(json.location);
+                };
+                formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                xhr.send(formData);
+            },
+
+            file_picker_callback: function(callback, value, meta) {
+                // Provide file and text for the link dialog
+                if (meta.filetype == 'file') {
+                    callback('mypage.html', {text: 'My text'});
+                    }
+                // Provide image and alt text for the image dialog
+                if (meta.filetype == 'image') {
+                    callback('myimage.jpg', {alt: 'My alt text'});
+                    }
+                // Provide alternative source and posted for the media dialog
+                if (meta.filetype == 'media') {
+                    callback('movie.mp4', {source2: 'alt.ogg', poster: 'image.jpg'});
+                    }
+            },
+
+            // plugins: "image",
+            // menubar: "insert",
+            // toolbar: "image",
+            // image_list: [
+            //     {title: 'My image 1', value: 'https://www.example.com/my1.gif'},
+            //     {title: 'My image 2', value: 'http://www.moxiecode.com/my2.gif'}
+            //     ],
 
             // plugins: [ 'quickbars' ],
             // toolbar: false,
@@ -44,7 +93,6 @@ export default {
             // inline: true,
             
             //菜单栏
-            // menubar:'format',
             // menubar: 'file edit print',
             menubar:'bar1 bar2 format',
             menu:{

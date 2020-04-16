@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import '../tinymce_editor/tinymce.min.js'
+import tinymce  from  '../tinymce_editor/tinymce.min.js'
 import './themes/silver/theme.min.js'
 // import './skins/ui/oxide/skin.min.css'
 import './langs/zh_CN.js'
@@ -37,13 +37,52 @@ export default {
             // width: 600,//width默认是100%，。
             height: '600px',//height通常为200px
             // content_css: 'css/content.css',
+            images_upload_url: '/demo/upimg.php',
+            images_upload_base_path: '/demo',
+            // image_uploadtab: false,
+
+            plugins: 'image',
+            // a11y_advanced_options: true,
+
+            file_picker_callback: function(callback, value, meta) {
+                // Provide file and text for the link dialog
+                if (meta.filetype == 'file') {
+                    callback('mypage.html', {text: 'My text'});
+                    }
+                // Provide image and alt text for the image dialog
+                if (meta.filetype == 'image') {
+                    callback('myimage.jpg', {alt: 'My alt text'});
+                    }
+                // Provide alternative source and posted for the media dialog
+                if (meta.filetype == 'media') {
+                    callback('movie.mp4', {source2: 'alt.ogg', poster: 'image.jpg'});
+                    }
+            },
+            
+            //菜单蓝菜单和工具栏图片上传
+            // plugins: "image",
+            // menubar: "insert",
+            // toolbar: "image",
+            // image_list: [
+            //     {title: 'My image 1', value: 'https://www.example.com/my1.gif'},
+            //     {title: 'My image 2', value: 'http://www.moxiecode.com/my2.gif'}
+            //     ],
+
+            //可以快速插入一个富文本编辑框，有很多快捷键
+            // plugins: [ 'quickbars' ],
+            // toolbar: false,
+            // menubar: false,
+            // inline: true,
+            
             //菜单栏
-            // menubar: 'file edit',
-            // menubar:'bar1 bar2 formats',
+            // menubar:'format',
+            // menubar: 'file edit print',
+            // menubar:'bar1 bar2 format',
             // menu:{
-            //     bar1:{title:'菜单12',items:'copy paste textcolor' },
-            //     bar2:{title:'菜单2',items:'cut italic' }
+            //     bar1:{title:'菜单12',items:'copy paste' },
+            //     bar2:{title:'菜单2',items:'cut italic forecolor backcolor' }
             //     },
+            //
             //工具栏
             toolbar:['bold italic underline strikethrough formats wordcount print image imagetools| styleselect formatselect fontselect fontsizeselect',
             'numlist bullist outdent indent blockquote | subscript superscript | alignleft aligncenter alignright alignjustify  | undo redo removeformat preview fullscreen ',
@@ -58,6 +97,7 @@ export default {
             // subscript（下角标）superscript（上角标）
             //插件
             plugins:'preview fullscreen wordcount print image imagetools',
+             // plugins:'preview fullscreen wordcount print image advlist table',
             //插件
             // plugins:'preview colorpicker',
             // plugins : 'advlist autolink link image lists preview', //字符串方式
